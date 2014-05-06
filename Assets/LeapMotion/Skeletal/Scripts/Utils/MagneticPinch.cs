@@ -1,21 +1,21 @@
 ﻿/******************************************************************************\
 * Copyright (C) Leap Motion, Inc. 2011-2014.                                   *
-* Leap Motion proprietary and  confidential.  Not for distribution.            *
-* Use subject to the terms of the Leap Motion SDK Agreement available at       *
-* https://developer.leapmotion.com/sdk_agreement, or another agreement between *
-* Leap Motion and you, your company or other organization.                     *
-* Author: Matt Tytel
+* Leap Motion proprietary. Licensed under Apache 2.0                           *
+* Available at http://www.apache.org/licenses/LICENSE-2.0.html                 *
 \******************************************************************************/
 
 using UnityEngine;
 using System.Collections;
 using Leap;
 
+// Leap Motion hand script that detects pinches and grabs the
+// closest rigidbody with a spring force if it's within a given range.
 public class MagneticPinch : MonoBehaviour {
+
+  const float TRIGGER_DISTANCE_RATIO = 0.7f;
 
   public float forceSpringConstant = 100.0f;
   public float magnetDistance = 2.0f;
-  const float TRIGGER_DISTANCE_RATIO = 0.7f;
 
   private bool pinching_;
   private Collider grabbed_;

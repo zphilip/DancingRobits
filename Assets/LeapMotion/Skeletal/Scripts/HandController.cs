@@ -1,10 +1,7 @@
 ﻿/******************************************************************************\
 * Copyright (C) Leap Motion, Inc. 2011-2014.                                   *
-* Leap Motion proprietary and  confidential.  Not for distribution.            *
-* Use subject to the terms of the Leap Motion SDK Agreement available at       *
-* https://developer.leapmotion.com/sdk_agreement, or another agreement between *
-* Leap Motion and you, your company or other organization.                     *
-* Author: Matt Tytel
+* Leap Motion proprietary. Licensed under Apache 2.0                           *
+* Available at http://www.apache.org/licenses/LICENSE-2.0.html                 *
 \******************************************************************************/
 
 using UnityEngine;
@@ -16,18 +13,19 @@ public class HandController : MonoBehaviour {
   // Reference distance from thumb base to pinky base in mm.
   protected const float MODEL_PALM_DIAMETER = 85.0f;
 
+  public bool separateLeftRight = false;
   public HandModel leftGraphicsModel;
   public HandModel leftPhysicsModel;
   public HandModel rightGraphicsModel;
   public HandModel rightPhysicsModel;
 
   private Controller leap_controller_;
-  private Dictionary<int, HandModel> hands_;
+  private Dictionary<int, HandModel> graphics_hands_;
   private Dictionary<int, HandModel> physics_hands_;
 
   void Start () {
     leap_controller_ = new Controller();
-    hands_ = new Dictionary<int, HandModel>();
+    graphics_hands_ = new Dictionary<int, HandModel>();
     physics_hands_ = new Dictionary<int, HandModel>();
   }
 
@@ -47,6 +45,7 @@ public class HandController : MonoBehaviour {
   HandModel CreateHand(HandModel model) {
     HandModel hand_model = Instantiate(model, transform.position, transform.rotation)
                            as HandModel;
+    hand_model.gameObject.SetActive(true);
     IgnoreHandCollisions(hand_model);
     return hand_model;
   }
@@ -105,7 +104,7 @@ public class HandController : MonoBehaviour {
 
   void Update() {
     Frame frame = leap_controller_.Frame();
-    UpdateModels(hands_, frame.Hands, leftGraphicsModel, rightGraphicsModel);
+    UpdateModels(graphics_hands_, frame.Hands, leftGraphicsModel, rightGraphicsModel);
   }
 
   void FixedUpdate () {
