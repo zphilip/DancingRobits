@@ -10,8 +10,8 @@ using Leap;
 
 namespace Leap {
 
-  // Extension to the unity vector class.
-  // Provides automatic scaling into unity scene space.
+  // Extension to the unity Vector class.
+  // Provides converting points and directions into Unity scene space.
   public static class UnityVectorExtension {
 
     // Leap coordinates are in mm and Unity is in meters. So scale by 1000.
@@ -37,6 +37,8 @@ namespace Leap {
     }
   }
 
+  // Extension to the unity Matrix class.
+  // Provides conversions to Quaternion and translations.
   public static class UnityMatrixExtension {
     public static readonly Vector LEAP_UP = new Vector(0, 1, 0);
     public static readonly Vector LEAP_FORWARD = new Vector(0, 0, -1);

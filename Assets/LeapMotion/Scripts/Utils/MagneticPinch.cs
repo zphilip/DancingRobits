@@ -51,6 +51,9 @@ public class MagneticPinch : MonoBehaviour {
     bool trigger_pinch = false;
     Hand hand = GetComponent<HandModel>().GetLeapHand();
 
+    if (hand == null)
+      return;
+
     // Thumb tip is the pinch position.
     Vector leap_thumb_tip = hand.Fingers[0].TipPosition;
 

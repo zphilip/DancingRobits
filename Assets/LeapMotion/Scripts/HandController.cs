@@ -23,7 +23,7 @@ public class HandController : MonoBehaviour {
   private Dictionary<int, HandModel> graphics_hands_;
   private Dictionary<int, HandModel> physics_hands_;
 
-  void Start () {
+  void Start() {
     leap_controller_ = new Controller();
     graphics_hands_ = new Dictionary<int, HandModel>();
     physics_hands_ = new Dictionary<int, HandModel>();
@@ -107,7 +107,7 @@ public class HandController : MonoBehaviour {
     UpdateModels(graphics_hands_, frame.Hands, leftGraphicsModel, rightGraphicsModel);
   }
 
-  void FixedUpdate () {
+  void FixedUpdate() {
     if (leap_controller_ == null)
       return;
 

@@ -14,7 +14,7 @@ public class ConfidenceTransparency : MonoBehaviour {
 
   private Material material;
 
-  void Start () {
+  void Start() {
     material = new Material(Shader.Find("Transparent/Diffuse"));
     Renderer[] renderers = GetComponentsInChildren<Renderer>();
     
@@ -22,7 +22,7 @@ public class ConfidenceTransparency : MonoBehaviour {
       renderers[i].material = material;
   }
 
-  void Update () {
+  void Update() {
     Hand leap_hand = GetComponent<HandModel>().GetLeapHand();
 
     if (leap_hand != null) {

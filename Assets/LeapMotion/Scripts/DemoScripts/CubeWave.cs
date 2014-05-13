@@ -1,11 +1,16 @@
-﻿using UnityEngine;
+﻿/******************************************************************************\
+* Copyright (C) Leap Motion, Inc. 2011-2014.                                   *
+* Leap Motion proprietary. Licensed under Apache 2.0                           *
+* Available at http://www.apache.org/licenses/LICENSE-2.0.html                 *
+\******************************************************************************/
+
+using UnityEngine;
 using System.Collections;
 
 public class CubeWave : MonoBehaviour {
 
   private const float BRIGHTNESS_SCALE = 5.0f;
   private const float BASE_BRIGHTNESS = 0.2f;
-  private const float MIN_BRIGHTNESS = 0.1f;
 
   public int gridWidth = 25;
   public int gridHeight = 25;
@@ -15,12 +20,14 @@ public class CubeWave : MonoBehaviour {
   public float damping = 0.01f;
 
   public Transform model;
-  public Light glow;
-  public Color color;
+  public Light lowGlow;
+  public Light highGlow;
+  public Color lowColor;
+  public Color highColor;
 
   Transform[,] cube_grid_;
 
-  void Start () {
+  void Start() {
     cube_grid_ = new Transform[gridHeight + 2, gridWidth + 2];
     for (int r = 0; r < gridHeight + 2; ++r) {
       for (int c = 0; c < gridWidth + 2; ++c) {
@@ -31,6 +38,7 @@ public class CubeWave : MonoBehaviour {
     float center_x = gridWidth * cellWidth / 2.0f;
     float center_y = gridHeight * cellHeight / 2.0f;
 
+    // Setup the cube grid.
     for (int r = 1; r <= gridHeight; ++r) {
       for (int c = 1; c <= gridWidth; ++c) {
         Vector3 location = new Vector3(c * cellWidth - center_x, 0, r * cellHeight - center_y);
@@ -41,10 +49,14 @@ public class CubeWave : MonoBehaviour {
     }
   }
 
-  void Update () {
-    float total_light = 0.0f;
+  void Update() {
+    float low_total_light = 0.0f;
+    float high_total_light = 0.0f;
+
     for (int r = 1; r <= gridHeight; ++r) {
       for (int c = 1; c <= gridWidth; ++c) {
+
+        // Discrete wave equation with damping.
         float neighbor_sum = (cube_grid_[r - 1, c].position.y + cube_grid_[r, c - 1].position.y +
                               cube_grid_[r + 1, c].position.y + cube_grid_[r, c + 1].position.y);
 
@@ -52,20 +64,26 @@ public class CubeWave : MonoBehaviour {
         cube_grid_[r, c].rigidbody.AddForce(springConstant * Vector3.up * delta_from_rest);
         cube_grid_[r, c].rigidbody.velocity *= (1 - damping);
 
+        // Set color of cube and add to glow amount based on current height.
         float delta_zero = transform.position.y - cube_grid_[r, c].position.y;
         float brightness = BASE_BRIGHTNESS +
                            BRIGHTNESS_SCALE * Mathf.Log(1 + 0.2f * delta_zero);
 
-        if (brightness < MIN_BRIGHTNESS)
-          cube_grid_[r, c].renderer.material.SetColor("_Color", color * MIN_BRIGHTNESS);
-        else
-          cube_grid_[r, c].renderer.material.SetColor("_Color", color * brightness);
-
-        total_light += brightness / (gridHeight * gridWidth);
+        if (brightness < 0) {
+          cube_grid_[r, c].renderer.material.SetColor("_Color", highColor * (-brightness));
+          high_total_light -= brightness / (gridHeight * gridWidth);
+        }
+        else {
+          cube_grid_[r, c].renderer.material.SetColor("_Color", lowColor * brightness);
+          low_total_light += brightness / (gridHeight * gridWidth);
+        }
       }
     }
 
-    if (glow != null)
-      glow.intensity = total_light;
+    // Set glow amount.
+    if (lowGlow != null)
+      lowGlow.intensity = low_total_light;
+    if (highGlow != null)
+      highGlow.intensity = high_total_light;
   }
 }
